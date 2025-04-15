@@ -48,7 +48,8 @@ python.exe -m venv [Name_of_venv]
 pip install -r requirements.txt
 ```
 
-> [!NOTE] This project currently only requires `pyperclip`, but using `requirements.txt` allows for easy expansion with more dependencies in the future.
+> [!NOTE] 
+> This project currently only requires `pyperclip`, but using `requirements.txt` allows for easy expansion with more dependencies in the future.
 
 ---
 
@@ -81,7 +82,8 @@ python "Clipboard Client.py" --ip 127.0.0.1 --port 65432
 
 ## 🔒 Security Notice
 
-> [!WARNING] This tool **does not use encryption**. If using over public or untrusted networks:
+> [!WARNING] 
+> This tool **does not use encryption**. If using over public or untrusted networks:
 >
 > - **Use a VPN or SSH tunnel** to secure the connection.
 > - **Do not share sensitive data** using this tool in unsecured environments.
@@ -91,3 +93,4 @@ python "Clipboard Client.py" --ip 127.0.0.1 --port 65432
 ## 📄 License
 
 Licensed under the **MIT License** — free to use, modify, and share.
+
