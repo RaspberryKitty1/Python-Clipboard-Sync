@@ -11,7 +11,6 @@ import os
 last_clipboard = ""
 fernet = None  
 
-# 🔐 Load encryption key from .env
 def load_key():
     global fernet
     load_dotenv()
@@ -20,7 +19,6 @@ def load_key():
         raise ValueError("❌ SHARED_KEY not found in .env")
     fernet = Fernet(key.encode())
 
-# 📥 Receive exactly n bytes from socket
 def recv_all(sock, length):
     data = b''
     while len(data) < length:
@@ -33,11 +31,9 @@ def recv_all(sock, length):
             return None
     return data
 
-# 🔐 Encrypt the data before sending over the socket
 def encrypt_data(data):
     return fernet.encrypt(data.encode())
 
-# 🔐 Decrypt the data after receiving from the socket
 def decrypt_data(data):
     return fernet.decrypt(data).decode()
 
