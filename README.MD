@@ -1,6 +1,6 @@
 # 📋 Clipboard Sync - Real-Time Clipboard Sharing via Network
 
-A simple Python-based client-server tool for **real-time clipboard synchronization** between multiple devices over a local network or the internet.
+A Python-based client-server tool for **real-time clipboard synchronization** between multiple devices over a local network or the internet. Now with **end-to-end encryption** for secure communication!
 
 ---
 
@@ -8,8 +8,7 @@ A simple Python-based client-server tool for **real-time clipboard synchronizati
 
 - 🔄 **Two-way clipboard sync**: Syncs clipboard content between the server and multiple clients.
 - ⚡ **Real-time updates**: Clipboard changes are immediately broadcast to all connected clients.
-- 🔐 **Change detection**: Uses SHA-256 hashing to detect clipboard changes securely.
-- 📡 **Broadcast system**: Distributes clipboard updates to all connected clients.
+- 🔐 **End-to-end encryption**: All clipboard data and socket communication are encrypted using Fernet symmetric encryption.
 - 🧵 **Multi-threaded handling**: Efficient management of multiple client connections.
 - 🖥️ **Cross-platform support**: Works on **Windows, macOS, and Linux**.
 - 📝 **Text-only syncing**: This tool syncs only text content. **Files, images, and other media are not supported**.
@@ -22,6 +21,8 @@ A simple Python-based client-server tool for **real-time clipboard synchronizati
 
 - Python 3.7+
 - `pyperclip` library
+- `cryptography` library for encryption
+- `.env` file for storing the encryption key
 
 ---
 
@@ -48,8 +49,18 @@ python.exe -m venv [Name_of_venv]
 pip install -r requirements.txt
 ```
 
-> [!NOTE] 
-> This project currently only requires `pyperclip`, but using `requirements.txt` allows for easy expansion with more dependencies in the future.
+---
+
+### 🔑 Generate Encryption Key
+
+Before running the server or client, generate an encryption key to be used for secure communication.
+
+```bash
+python generate_key.py
+```
+
+- This will generate a new encryption key and store it in a `.env` file.
+- The key will be used by both the server and client to encrypt and decrypt clipboard data.
 
 ---
 
@@ -62,7 +73,7 @@ python "Clipboard Server.py" --port 65432
 ```
 
 - Default port is `65432` if no port is provided.
-- The server monitors clipboard changes and broadcasts updates to connected clients.
+- The server monitors clipboard changes, encrypts the clipboard data, and broadcasts updates to connected clients securely.
 
 ---
 
@@ -76,16 +87,17 @@ python "Clipboard Client.py" --ip 127.0.0.1 --port 65432
 
 - Default port is `65432` if no port is provided.
 - Default IP is `127.0.0.1` if no IP is specified.
-- The client's clipboard will automatically sync with the server and other connected clients.
+- The client's clipboard will automatically sync with the server and other connected clients, with all communication encrypted.
 
 ---
 
 ## 🔒 Security Notice
 
-> [!WARNING] 
-> This tool **does not use encryption**. If using over public or untrusted networks:
+> [!WARNING]
+> This tool **uses encryption** to secure the clipboard data and socket communication. However, please consider the following:
 >
-> - **Use a VPN or SSH tunnel** to secure the connection.
+> - Ensure that your `.env` file (which contains the encryption key) is **kept secret** and not shared or committed to version control.
+> - While the data is encrypted during transmission, consider using a **VPN or SSH tunnel** when using over public or untrusted networks to add another layer of security.
 > - **Do not share sensitive data** using this tool in unsecured environments.
 
 ---
@@ -93,4 +105,3 @@ python "Clipboard Client.py" --ip 127.0.0.1 --port 65432
 ## 📄 License
 
 Licensed under the **MIT License** — free to use, modify, and share.
-
