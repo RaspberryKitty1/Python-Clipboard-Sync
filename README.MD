@@ -12,6 +12,7 @@ A simple Python-based client-server tool for **real-time clipboard synchronizati
 - 📡 **Broadcast system**: Distributes clipboard updates to all connected clients.
 - 🧵 **Multi-threaded handling**: Efficient management of multiple client connections.
 - 🖥️ **Cross-platform support**: Works on **Windows, macOS, and Linux**.
+- 📝 **Text-only syncing**: This tool syncs only text content. **Files, images, and other media are not supported**.
 
 ---
 
@@ -81,7 +82,7 @@ python "Clipboard Client.py" --ip 127.0.0.1 --port 65432
 ## 🔒 Security Notice
 
 > [!WARNING] This tool **does not use encryption**. If using over public or untrusted networks:
-> 
+>
 > - **Use a VPN or SSH tunnel** to secure the connection.
 > - **Do not share sensitive data** using this tool in unsecured environments.
 
