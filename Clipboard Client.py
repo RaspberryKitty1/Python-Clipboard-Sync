@@ -11,6 +11,9 @@ import os
 last_clipboard = ""
 fernet = None  
 
+MAX_RETRIES = 5  # Max retry attempts after disconnect
+RETRY_DELAY = 2  # Delay before retrying connection
+
 def load_key():
     global fernet
     load_dotenv()
@@ -32,9 +35,13 @@ def recv_all(sock, length):
     return data
 
 def encrypt_data(data):
+    if not fernet:
+        raise ValueError("❌ Fernet encryption object is not initialized.")
     return fernet.encrypt(data.encode())
 
 def decrypt_data(data):
+    if not fernet:
+        raise ValueError("❌ Fernet encryption object is not initialized.")
     return fernet.decrypt(data).decode()
 
 def get_hash(text):
@@ -87,17 +94,35 @@ def listen_from_server(sock):
             break
 
 def start_client(server_ip, server_port):
-    load_key()
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    try:
-        sock.connect((server_ip, server_port))
-        print(f"[✅ CONNECTED] Connected to server at {server_ip}:{server_port}")
-    except socket.error:
-        print(f"[❌ FAILED] Could not connect to server.")
-        return
+    load_key()  # Ensure the key is loaded before starting clipboard monitor.
 
-    threading.Thread(target=clipboard_monitor, args=(sock,), daemon=True).start()
-    listen_from_server(sock)
+    while True:  # Outer loop for reconnection
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        attempt = 1
+
+        while attempt <= 15:
+            delay = min(2 * attempt, 30)  # Delay increases per attempt, max 30 sec
+
+            try:
+                sock.connect((server_ip, server_port))
+                print(f"[✅ CONNECTED] Connected to server at {server_ip}:{server_port}")
+                break  # Exit retry loop on successful connection
+            except socket.error as e:
+                print(f"[❌ FAILED] Could not connect to server: {e}")
+                if attempt < 15:
+                    print(f"[⚠️ Attempting to reconnect (Attempt {attempt}/15) in {delay} seconds...]")
+                    time.sleep(delay)
+                    attempt += 1
+                else:
+                    print("[❌ ERROR] Max retry attempts reached. Exiting.")
+                    return  # Exit the script after max retries
+
+        # Start threads only if connected successfully
+        if attempt <= 15:
+            threading.Thread(target=clipboard_monitor, args=(sock,), daemon=True).start()
+            listen_from_server(sock)
+            print("[⚠️ DISCONNECTED] Server closed connection. Reconnecting...")
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Clipboard Sync Client (Encrypted)")
